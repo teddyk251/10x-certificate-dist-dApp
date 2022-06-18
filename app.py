@@ -1,7 +1,7 @@
 from importlib.resources import Resource
 from flask import Flask, json, jsonify, request
 import pymongo
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_restful import Api, Resource
 
 app = Flask(__name__)
@@ -12,6 +12,7 @@ client = pymongo.MongoClient("mongodb+srv://teddyk:JToi5MPMTkwg6G9L@cluster0.zka
 db = client.get_database('webapp')
 users = db.users
 class Login(Resource):
+    @cross_origin()
     def post(self):
         data = request.json
         email = data['email']
@@ -26,6 +27,7 @@ class Login(Resource):
             return {"body": "fail"}
 
 class Signup(Resource):
+    @cross_origin()
     def post(self):
         data = request.json
         name = data['name']
