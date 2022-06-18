@@ -1,15 +1,37 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
-const SignUpForm = ({ Signup, error }) => {
+const SignUpForm = () => {
 
-    const [details, setDetails] = useState({ name: "", email: "", password: "", publicKey: "", role:"" });
+    const [details, setDetails] = useState({ name: "", email: "", password: "", publicKey: "", role: "" });
+    const history = useHistory();
+    const [error, setError] = useState(false);
+
 
     const submitHandler = (e) => {
         e.preventDefault();
+        fetch('http://127.0.0.1:5000/signup', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(details)
+        })
+            .then(response => response.json())
+            .then((data) => {
+                if (data.body === "success") {
 
-        Signup(details);
+                    history.push("/login");
+
+                }
+                else {
+                    setError(true);
+                }
+
+                console.log(data.body)
+
+            })
     }
+
 
 
     return (
@@ -36,12 +58,13 @@ const SignUpForm = ({ Signup, error }) => {
                 <label>Role</label>
                 <select
                     value={details.role}
-                    onChange={(e) => setDetails({...details, role:e.target.value})}
+                    onChange={(e) => setDetails({ ...details, role: e.target.value })}
                 >
                     <option value="trainee">Trainee</option>
                     <option value="staff">Staff</option>
                 </select>
                 <input type="submit" value="SignUp" />
+                { error && <div className="incorrect-input">Invalid Input</div>}
             </div>
             <Link to="/"> Login </Link>
         </form>

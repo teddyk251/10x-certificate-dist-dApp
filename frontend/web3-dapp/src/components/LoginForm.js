@@ -1,13 +1,38 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
-const LoginForm = ({ Login, error }) => {
+const LoginForm = () => {
 
     const [details, setDetails] = useState({name:"", email:"", password:"" });
+    const [loginStatus, setLoginStatus] = useState(false);
+    const [error, setError] = useState(false);
+    const history = useHistory();
 
     const submitHandler = (e) => {
         e.preventDefault();
 
-        Login(details);
+        fetch('http://127.0.0.1:5000/login', {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(details)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            if (data.body === "success") {
+                setLoginStatus(true);
+                if (data.role === "trainee") {
+                    history.push("/trainee");
+                 } else {
+                     history.push("/staff");
+                 }
+            }
+            else {
+                setError(true);
+            }
+
+            console.log(data.body)
+           
+        })
     }
 
 
@@ -15,7 +40,6 @@ const LoginForm = ({ Login, error }) => {
         <form  onSubmit={submitHandler}>
             <div className="form-inner">
                 <h2>Login</h2>
-                {/*error*/}
                 <div className="form-group">
                     <label htmlFor="name">Name:</label>
                     <input type="text" name="name" id="name" onChange={e => setDetails({...details, name:e.target.value})} value={details.name} required />
@@ -30,6 +54,7 @@ const LoginForm = ({ Login, error }) => {
                 </div>
                 
                 <input type="submit" value="LOGIN" />
+                { error && <div className="incorrect-input">Invalid Login Credentials</div>}
             </div>
         </form>
      );
