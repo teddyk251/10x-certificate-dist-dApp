@@ -25,9 +25,22 @@ class Login(Resource):
             print("Not found")
             return {"body": "fail"}
 
-
+class Signup(Resource):
+    def post(self):
+        data = request.json
+        name = data['name']
+        email = data['email']
+        password = data['password']
+        role = data['role']
+        public_key = data['publicKey']    
+        try:
+            users.insert_one({'name': name, 'email': email, 'password': password, 'role': role, 'public_key': public_key})
+            return {"status": "success"}
+        except:
+            return {"body": "fail"}
 
 api.add_resource(Login, '/login')
+api.add_resource(Signup, '/signup')
 
 
 
