@@ -7,13 +7,12 @@ from flask_restful import Api, Resource
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
-CORS(api)
 
 client = pymongo.MongoClient("mongodb+srv://teddyk:JToi5MPMTkwg6G9L@cluster0.zka8x.mongodb.net/?retryWrites=true&w=majority")
 db = client.get_database('webapp')
 users = db.users
 class Login(Resource):
-    @cross_origin()
+    # @cross_origin()
     def post(self):
         data = request.json
         email = data['email']
@@ -28,7 +27,7 @@ class Login(Resource):
             return {"body": "fail"}
 
 class Signup(Resource):
-    @cross_origin()
+    # @cross_origin()
     def post(self):
         data = request.json
         name = data['name']
